@@ -21,49 +21,60 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Setting up the drops
   var drops = [];
-  for (var i = 0; i < columns; i++) {
-    drops[i] = 13;
+
+  function drawElement(context ,x, y, fillStyle, element) {
+    context.fillStyle = fillStyle;
+    context.fillText(element, x,y)
   }
 
-  function drawline(lineheight) {
-    for (var i = 0; i < columns ; i++) {
-      var text = letters[Math.floor(Math.random() * letters.length)];
-      ctx.fillStyle = `rgba(168,85,247, 1)`;
-      ctx.fillText(text, i * fontSize, lineheight * fontSize)
+  const delay = ms => new Promise(res => setTimeout(res, ms));
+
+  function yPositionIsInUse(y) {
+    console.log(drops)
+
+    for (var i = 0; i < drops.length; i++) {
+      console.log(drops[i].y, y)
+      if (drops[i].y === y)
+        return true
+    }
+    return false
+  }
+ 
+  function createDrop() {
+    var y = 0;
+
+    yPositionIsInUse(y)
+
+    while (yPositionIsInUse(y)) {
+      console.log(yPositionIsInUse(y))
+      y = Math.floor(Math.random() * columns)
+    }
+
+    var elements = [] 
+    var currentX = 0
+
+    // Randomly populate the elements array
+    for (var i = 0; i < lines; i++) {
+      elements.push(letters[Math.floor(Math.random() * letters.length)])
+    }
+
+    drops.push({ y, elements, currentX})
+  }
+
+  async function startDrop(drop) {
+    for (var i = 0; i < lines-1 ; i++) {
+      drawElement(ctx, drop.y, fontSize * drop.currentX, `rgba(168,85,247, 1)`, drop.elements[i])
+      await delay(100)
+      drop.currentX++
     }
   }
-
-  function fadingEffect(lineheight, alpha) {
-    if (lineheight > 0) {
-      for (var i = 0; i < columns ; i++) {
-        var text = letters[Math.floor(Math.random() * letters.length)];
-        ctx.fillStyle = `rgba(168,85,247, ${alpha})`;
-        ctx.fillText(text, i * fontSize, lineheight * fontSize)
-      }
-    }
-  }
-
-  var lineheight = 1
 
   function matrix() {
-    ctx.fillStyle = '#000000';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    createDrop()
 
-    fadingEffect(lineheight - 8, 0.1)
-    fadingEffect(lineheight - 7, 0.2)
-    fadingEffect(lineheight - 6, 0.3)
-    fadingEffect(lineheight - 5, 0.4)
-    fadingEffect(lineheight - 4, 0.5)
-    fadingEffect(lineheight - 3, 0.6)
-    fadingEffect(lineheight - 2, 0.7)
-    fadingEffect(lineheight - 1, 0.8)
-    drawline(lineheight);
-    lineheight ++
-
-    if (lineheight > lines) 
-      lineheight = 0
+    startDrop(drops.pop())
   }
 
   // Loop the animation 
-  setInterval(matrix, 50);
+  setInterval(matrix, 40);
 });
