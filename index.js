@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // Setting up the letters
-  var letters = 'ABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZ';
+  var letters = '123456789ABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZ';
   letters = letters.split('');
 
   // Setting up the columns and lines
@@ -33,7 +33,6 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log(drops)
 
     for (var i = 0; i < drops.length; i++) {
-      console.log(drops[i].y, y)
       if (drops[i].y === y)
         return true
     }
@@ -41,13 +40,19 @@ document.addEventListener("DOMContentLoaded", function () {
   }
  
   function createDrop() {
-    var y = 0;
+    console.log(drops.length, columns);
+    if (drops.length >= columns) {
+      console.log('drops array is full');
+      return;
+    }
+
+    var y = Math.floor(Math.random() * columns);
 
     yPositionIsInUse(y)
 
     while (yPositionIsInUse(y)) {
-      console.log(yPositionIsInUse(y))
-      y = Math.floor(Math.random() * columns)
+      console.log('try new combination');
+      y = Math.floor(Math.random() * columns);
     }
 
     var elements = [] 
@@ -63,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   async function startDrop(drop) {
     for (var i = 0; i < lines-1 ; i++) {
-      drawElement(ctx, drop.y, fontSize * drop.currentX, `rgba(168,85,247, 1)`, drop.elements[i])
+      drawElement(ctx, drop.y * fontSize ,drop.currentX * fontSize, `rgba(168,85,247, 1)`, drop.elements[i])
       await delay(100)
       drop.currentX++
     }
@@ -72,9 +77,9 @@ document.addEventListener("DOMContentLoaded", function () {
   function matrix() {
     createDrop()
 
-    startDrop(drops.pop())
+    startDrop(drops[drops.length - 1])
   }
 
   // Loop the animation 
-  setInterval(matrix, 40);
+  setInterval(matrix, 100);
 });
