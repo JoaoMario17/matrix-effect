@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded",() => {
     isDropping: boolean;
     currentX: number;
     elements: Array<string>;
+    speed: number;
   }
 
   var drops: Array<drop>;
@@ -55,6 +56,7 @@ document.addEventListener("DOMContentLoaded",() => {
         isDropping: false,
         currentX: -1,
         elements: [],
+        speed: 0
       }
 
       drops.push(drop);
@@ -78,7 +80,9 @@ document.addEventListener("DOMContentLoaded",() => {
   }
   
   function createDrop(column: number, elements: Array<string>) {
-    drops[column] = { isDropping: true, elements, currentX: 0} 
+    var speeds = [ 50, 100, 200, 300, 400, 500 ];
+
+    drops[column] = { isDropping: true, elements, currentX: 0, speed: speeds[Math.floor(Math.random() * 5)]} 
   }
   
   async function createDroptemp() {
@@ -105,7 +109,7 @@ document.addEventListener("DOMContentLoaded",() => {
 
   async function startDrop(drop: drop, column: number) {
     for(var i = 0; i < drop.elements.length + 15; i++) {
-      await delay(100);
+      await delay(drop.speed);
       drop.currentX++;
     }
 
