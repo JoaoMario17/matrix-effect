@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded",() => {
   if (context == null) 
     return console.log("could not build context element!");
 
-
   // Setting up the background color
   context.fillStyle = '#000000';
   context.fillRect(0, 0, canvas.width, canvas.height);
@@ -29,78 +28,124 @@ document.addEventListener("DOMContentLoaded",() => {
   // Setting up the columns and lines
   var fontSize = 10;
   var columns = Math.floor(canvas.width / fontSize);
-  var lines = canvas.height / fontSize
+  var lines = canvas.height / fontSize;
+
+
+
 
   // Setting up the drops
   interface drop {
+    isDropping: boolean;
     currentX: number;
-    y: number;
     elements: Array<string>;
   }
 
   var drops: Array<drop>;
   drops = [];
 
-  function drawElement(context: CanvasRenderingContext2D , x: number, y: number, fillStyle: string, element: string ) {
-    context.fillStyle = fillStyle;
-    context.fillText(element, x,y)
+  async function delay(time: number) {
+    await new Promise(resolve => {
+      return setTimeout(resolve, time);
+    })
   }
 
-  function yPositionIsInUse(y: number) {
-    console.log(drops)
+  function setDrops()  {
+    for (var i = 0; i < columns; i++) {
+      var drop = {
+        isDropping: false,
+        currentX: -1,
+        elements: [],
+      }
 
-    for (var i = 0; i < drops.length; i++) {
-      if (drops[i].y === y)
-        return true
+      drops.push(drop);
     }
-    return false
+  }
+
+  function thereIsAvailableDropSpaces() {
+    for (var i = 0; i < drops.length; i++) {
+      if(!drops[i].isDropping)
+        return true;
+    }
+
+    return false;
+  }
+
+  function columnIsInUse(column: number) {
+    if (drops[column].isDropping)
+      return true;
+
+    return false;
   }
   
-  function createDrop() {
-    if (drops.length === columns) {
-      console.log('drops array is full');
-      console.log(drops.length, columns);
+  function createDrop(column: number, elements: Array<string>) {
+    drops[column] = { isDropping: true, elements, currentX: 0} 
+  }
+  
+  async function createDroptemp() {
+    if (!thereIsAvailableDropSpaces()) 
       return;
-    }
 
-    var y = Math.floor(Math.random() * columns);
+    var column = 0;
 
-    yPositionIsInUse(y)
-
-    while (yPositionIsInUse(y)) {
-      console.log('try new combination');
-      y = Math.floor(Math.random() * columns);
-    }
+    do {
+      column = Math.floor(Math.random() * columns);
+    } while (columnIsInUse(column))
 
     var elements: Array<string>
     elements = []
-    var currentX = 0
 
     // Randomly populate the elements array
     for (var i = 0; i < lines; i++) {
       elements.push(letters[Math.floor(Math.random() * letters.length)])
     }
 
-    drops.push({ y, elements, currentX})
+    createDrop(column, elements);
+    startDrop(drops[column], column);
   }
 
-  async function startDrop(context:CanvasRenderingContext2D, drop: drop) {
-    for (var i = 0; i < lines-1 ; i++) {
-      drawElement(context, drop.y * fontSize ,drop.currentX * fontSize, `rgba(168,85,247, 1)`, drop.elements[i])
-      drop.currentX++
+  async function startDrop(drop: drop, column: number) {
+    for(var i = 0; i < drop.elements.length + 15; i++) {
+      await delay(100);
+      drop.currentX++;
+    }
+
+    //remover drop do array de drops
+    drops[column].isDropping = false;
+    return;
+  }
+
+  function renderDrop(drop: drop, column: number) {
+    for(var i = 0; i < drop.elements.length; i++) {
+      if (context) {
+        if (i > drop.currentX - 15) {
+          context.fillStyle = 'rgba(168,85,247, 1)';
+          context.fillText(drop.elements[i], column * fontSize, i * fontSize);
+        }
+
+        if (i === drop.currentX) 
+          break;
+      }
     }
   }
 
-  function renderDrop(drop: drop) {
-    console.log(drop);
+  function renderScreen() {
+    if(context && canvas) {
+      context.fillStyle = '#000000';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    for(var i = 0; i < drops.length; i++) {
+      if (drops[i].isDropping) {
+        renderDrop(drops[i], i);
+      }
+    }
   }
 
   function matrix() {
-    createDrop();
-
-    renderDrop(drops[0]);
+    createDroptemp();
   }
 
-  // Loop the animation 
-  setInterval(matrix, 500);
+  setDrops();
+  setInterval(matrix, 100);
+  setInterval(renderScreen, 10);
 });
