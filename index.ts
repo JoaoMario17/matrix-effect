@@ -26,13 +26,13 @@ document.addEventListener("DOMContentLoaded",() => {
   var letters = '!@#$%¨&*()_+-=/?123456789ABCDEFGHIJKLMNOPQRSTUVWYXZ';
 
   // Setting up the columns and lines
-  var fontSize = 10;
+  var fontSize = 12;
   var columns = Math.floor(canvas.width / fontSize);
   var lines = canvas.height / fontSize;
 
-
-  const dropsLength = 40;
-  const dropsSpeeds = [ 50, 80, 100 ];
+  context.font = `${fontSize}px Arial`
+  const dropsLength = 50;
+  const dropsSpeeds = [ 50, 60, 70, 80, 90 ];
 
 
   // Setting up the drops
@@ -175,6 +175,6 @@ document.addEventListener("DOMContentLoaded",() => {
   }
 
   setDrops();
-  setInterval(matrix, 80);
+  setInterval(matrix, 60);
   setInterval(renderScreen, 10);
 });
