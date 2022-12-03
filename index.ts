@@ -12,11 +12,20 @@ document.addEventListener("DOMContentLoaded",() => {
   if (canvas.parentElement) {
     canvas.width = canvas.parentElement.clientWidth;
     canvas.height = canvas.parentElement.clientHeight;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      if (canvas) {
+        canvas.width = entries[0].borderBoxSize[0].inlineSize;
+        canvas.height = entries[0].borderBoxSize[0].blockSize;
+      }
+    });
+
+    resizeObserver.observe(canvas.parentElement);
   } else {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   }
-  
+
   console.log("width:", canvas.width, "height:", canvas.height);
 
   // Building context
