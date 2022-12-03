@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded",() => {
   context.fillRect(0, 0, canvas.width, canvas.height);
 
   // Setting up the letters
-  var letters = '123456789ABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZ';
+  var letters = '!@#$%¨&*()_+-=/?123456789ABCDEFGHIJKLMNOPQRSTUVWYXZ';
 
   // Setting up the columns and lines
   var fontSize = 10;
