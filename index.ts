@@ -31,6 +31,8 @@ document.addEventListener("DOMContentLoaded",() => {
   var lines = canvas.height / fontSize;
 
 
+  const dropsLength = 40;
+  const dropsSpeeds = [ 50, 80, 100 ];
 
 
   // Setting up the drops
@@ -80,9 +82,7 @@ document.addEventListener("DOMContentLoaded",() => {
   }
   
   function createDrop(column: number, elements: Array<string>) {
-    var speeds = [ 50, 100, 200, 300, 400, 500 ];
-
-    drops[column] = { isDropping: true, elements, currentX: 0, speed: speeds[Math.floor(Math.random() * 5)]} 
+    drops[column] = { isDropping: true, elements, currentX: 1, speed: dropsSpeeds[Math.floor(Math.random() * dropsSpeeds.length)]} 
   }
   
   async function createDroptemp() {
@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded",() => {
   }
 
   async function startDrop(drop: drop, column: number) {
-    for(var i = 0; i < drop.elements.length + 15; i++) {
+    for(var i = 0; i < drop.elements.length + dropsLength; i++) {
       await delay(drop.speed);
       drop.currentX++;
     }
@@ -119,10 +119,35 @@ document.addEventListener("DOMContentLoaded",() => {
   }
 
   function renderDrop(drop: drop, column: number) {
-    for(var i = 0; i < drop.elements.length; i++) {
+    for(var i = 1; i < drop.elements.length; i++) {
       if (context) {
-        if (i > drop.currentX - 15) {
-          context.fillStyle = 'rgba(168,85,247, 1)';
+        if (i > drop.currentX - dropsLength) {
+          context.fillStyle = 'rgba(109, 40, 217, 1)';
+
+          if (i === drop.currentX) {
+            context.fillStyle = `rgba(221, 214, 254, 1)`;
+          }
+
+          if (i < (drop.currentX - dropsLength/2) && i >  drop.currentX - (dropsLength - (dropsLength/10 * 4))) {
+            context.fillStyle = 'rgba(109, 40, 217, 0.8)';
+          }
+
+          if (i <=  drop.currentX - (dropsLength - (dropsLength/10 * 4)) && i >  drop.currentX - (dropsLength - (dropsLength/10 * 3))) {
+            context.fillStyle = 'rgba(109, 40, 217, 0.6)';
+          }
+
+          if (i <= drop.currentX - (dropsLength - (dropsLength/10 * 3)) && i >  drop.currentX - (dropsLength - (dropsLength/10 * 2))) {
+            context.fillStyle = 'rgba(109, 40, 217, 0.4)';
+          }
+
+          if (i <=  drop.currentX - (dropsLength - (dropsLength/10 * 2)) && i >  drop.currentX - (dropsLength - (dropsLength/10 * 1))) {
+            context.fillStyle = 'rgba(109, 40, 217, 0.2)';
+          }
+
+          if (i <= drop.currentX - (dropsLength - (dropsLength/10 * 1))) {
+            context.fillStyle = 'rgba(109, 40, 217, 0.01)';
+          }
+          
           context.fillText(drop.elements[i], column * fontSize, i * fontSize);
         }
 
@@ -150,6 +175,6 @@ document.addEventListener("DOMContentLoaded",() => {
   }
 
   setDrops();
-  setInterval(matrix, 100);
+  setInterval(matrix, 80);
   setInterval(renderScreen, 10);
 });
