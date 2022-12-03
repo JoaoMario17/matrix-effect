@@ -9,8 +9,15 @@ document.addEventListener("DOMContentLoaded",() => {
     return console.log("could not build canvas element!");
 
   //Setting up canvas dimensions
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  if (canvas.parentElement) {
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = canvas.parentElement.clientHeight;
+  } else {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  
+  console.log("width:", canvas.width, "height:", canvas.height);
 
   // Building context
   context = canvas.getContext("2d");
