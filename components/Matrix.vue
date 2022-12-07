@@ -1,12 +1,10 @@
 <script>
-import script from '../script/index.js'
-
 export default {
   mounted() {
     const plugin = document.createElement("script");
     plugin.setAttribute(
-      "src",
-      script
+      'src',
+      '../script/index.js'
     );
     plugin.async = true;
     document.head.appendChild(plugin);
