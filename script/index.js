@@ -100,24 +100,24 @@ document.addEventListener("DOMContentLoaded", () => {
         for (var i = 1; i < drop.elements.length; i++) {
             if (context) {
                 if (i > drop.currentX - dropsLength) {
-                    context.fillStyle = 'rgba(109, 40, 217, 1)';
+                    context.fillStyle = 'rgba(101, 163, 13, 1)';
                     if (i === drop.currentX) {
-                        context.fillStyle = `rgba(221, 214, 254, 1)`;
+                        context.fillStyle = `rgba(236, 252, 203, 1)`;
                     }
                     if (i < (drop.currentX - dropsLength / 2) && i > drop.currentX - (dropsLength - (dropsLength / 10 * 4))) {
-                        context.fillStyle = 'rgba(109, 40, 217, 0.8)';
+                        context.fillStyle = 'rgba(101, 163, 13, 0.8)';
                     }
                     if (i <= drop.currentX - (dropsLength - (dropsLength / 10 * 4)) && i > drop.currentX - (dropsLength - (dropsLength / 10 * 3))) {
-                        context.fillStyle = 'rgba(109, 40, 217, 0.6)';
+                        context.fillStyle = 'rgba(101, 163, 13, 0.6)';
                     }
                     if (i <= drop.currentX - (dropsLength - (dropsLength / 10 * 3)) && i > drop.currentX - (dropsLength - (dropsLength / 10 * 2))) {
-                        context.fillStyle = 'rgba(109, 40, 217, 0.4)';
+                        context.fillStyle = 'rgba(101, 163, 13, 0.4)';
                     }
                     if (i <= drop.currentX - (dropsLength - (dropsLength / 10 * 2)) && i > drop.currentX - (dropsLength - (dropsLength / 10 * 1))) {
-                        context.fillStyle = 'rgba(109, 40, 217, 0.2)';
+                        context.fillStyle = 'rgba(101, 163, 13, 0.2)';
                     }
                     if (i <= drop.currentX - (dropsLength - (dropsLength / 10 * 1))) {
-                        context.fillStyle = 'rgba(109, 40, 217, 0.01)';
+                        context.fillStyle = 'rgba(101, 163, 13, 0.01)';
                     }
                     context.fillText(drop.elements[i], column * fontSize, i * fontSize);
                 }
