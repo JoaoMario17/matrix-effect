@@ -2,7 +2,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     var canvas;
     var context;
-    // Building canvas
+    // Trying to get the canvas
     canvas = document.querySelector('#canvas-tag');
     if (canvas == null)
         return console.log("could not build canvas element!");
@@ -22,17 +22,16 @@ document.addEventListener("DOMContentLoaded", () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
     }
-    console.log("width:", canvas.width, "height:", canvas.height);
-    // Building context
+    // Trying to build context
     context = canvas.getContext("2d");
     if (context == null)
         return console.log("could not build context element!");
     // Setting up the background color
     context.fillStyle = '#000000';
     context.fillRect(0, 0, canvas.width, canvas.height);
-    // Setting up the letters
+    // Setting up the characters
     var letters = '!@#$%¨&*()_+-=/?123456789ABCDEFGHIJKLMNOPQRSTUVWYXZ';
-    // Setting up the columns and lines
+    // Setting up the columns, lines and characters font size
     var fontSize = 12;
     var columns = Math.floor(canvas.width / fontSize);
     var lines = canvas.height / fontSize;
@@ -72,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function createDrop(column, elements) {
         drops[column] = { isDropping: true, elements, currentX: 1, speed: dropsSpeeds[Math.floor(Math.random() * dropsSpeeds.length)] };
     }
-    async function createDroptemp() {
+    async function dropsControl() {
         if (!thereIsAvailableDropSpaces())
             return;
         var column = 0;
@@ -139,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     function matrix() {
-        createDroptemp();
+        dropsControl();
     }
     setDrops();
     setInterval(matrix, 60);
