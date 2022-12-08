@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     var canvas;
     var context;
     // Trying to get the canvas
-    canvas = document.querySelector('#canvas-tag');
+    canvas = document.querySelector('#matrix');
     if (canvas == null)
         return console.log("could not build canvas element!");
     //Setting up canvas dimensions
