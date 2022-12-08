@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 document.addEventListener("DOMContentLoaded", () => {
     var canvas;
     var context;
@@ -50,11 +41,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const dropsSpeeds = [50, 60, 70, 80, 90];
     var drops;
     drops = [];
-    function delay(time) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield new Promise(resolve => {
-                return setTimeout(resolve, time);
-            });
+    async function delay(time) {
+        await new Promise(resolve => {
+            return setTimeout(resolve, time);
         });
     }
     function setDrops() {
@@ -83,34 +72,30 @@ document.addEventListener("DOMContentLoaded", () => {
     function createDrop(column, elements) {
         drops[column] = { isDropping: true, elements, currentX: 1, speed: dropsSpeeds[Math.floor(Math.random() * dropsSpeeds.length)] };
     }
-    function createDroptemp() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!thereIsAvailableDropSpaces())
-                return;
-            var column = 0;
-            do {
-                column = Math.floor(Math.random() * columns);
-            } while (columnIsInUse(column));
-            var elements;
-            elements = [];
-            // Randomly populate the elements array
-            for (var i = 0; i < lines; i++) {
-                elements.push(letters[Math.floor(Math.random() * letters.length)]);
-            }
-            createDrop(column, elements);
-            startDrop(drops[column], column);
-        });
-    }
-    function startDrop(drop, column) {
-        return __awaiter(this, void 0, void 0, function* () {
-            for (var i = 0; i < drop.elements.length + dropsLength; i++) {
-                yield delay(drop.speed);
-                drop.currentX++;
-            }
-            //remover drop do array de drops
-            drops[column].isDropping = false;
+    async function createDroptemp() {
+        if (!thereIsAvailableDropSpaces())
             return;
-        });
+        var column = 0;
+        do {
+            column = Math.floor(Math.random() * columns);
+        } while (columnIsInUse(column));
+        var elements;
+        elements = [];
+        // Randomly populate the elements array
+        for (var i = 0; i < lines; i++) {
+            elements.push(letters[Math.floor(Math.random() * letters.length)]);
+        }
+        createDrop(column, elements);
+        startDrop(drops[column], column);
+    }
+    async function startDrop(drop, column) {
+        for (var i = 0; i < drop.elements.length + dropsLength; i++) {
+            await delay(drop.speed);
+            drop.currentX++;
+        }
+        //remover drop do array de drops
+        drops[column].isDropping = false;
+        return;
     }
     function renderDrop(drop, column) {
         for (var i = 1; i < drop.elements.length; i++) {
