@@ -1,36 +1,19 @@
-"use strict";
+import { setDrops, renderDrop, thereIsAvailableDropSpaces, columnIsInUse, createDrop, startDrop, } from './matrix-functions.js';
 document.addEventListener("DOMContentLoaded", () => {
     var canvas;
     var context;
-    // Trying to get the canvas
+    var dropsJugglerInterval;
+    var renderScreenInterval;
+    var letters = '!@#$%¨&*()_+-=/?123456789ABCDEFGHIJKLMNOPQRSTUVWYXZ';
     canvas = document.querySelector('#matrix');
     if (canvas == null)
         return console.log("could not build canvas element!");
-    //Setting up canvas dimensions
-    if (canvas.parentElement) {
-        canvas.width = canvas.parentElement.clientWidth;
-        canvas.height = canvas.parentElement.clientHeight;
-        const resizeObserver = new ResizeObserver((entries) => {
-            if (canvas) {
-                canvas.width = entries[0].borderBoxSize[0].inlineSize;
-                canvas.height = entries[0].borderBoxSize[0].blockSize;
-            }
-        });
-        resizeObserver.observe(canvas.parentElement);
-    }
-    else {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-    // Trying to build context
     context = canvas.getContext("2d");
     if (context == null)
         return console.log("could not build context element!");
     // Setting up the background color
     context.fillStyle = '#000000';
     context.fillRect(0, 0, canvas.width, canvas.height);
-    // Setting up the characters
-    var letters = '!@#$%¨&*()_+-=/?123456789ABCDEFGHIJKLMNOPQRSTUVWYXZ';
     // Setting up the columns, lines and characters font size
     var fontSize = 12;
     var columns = Math.floor(canvas.width / fontSize);
@@ -40,107 +23,61 @@ document.addEventListener("DOMContentLoaded", () => {
     const dropsSpeeds = [50, 60, 70, 80, 90];
     var drops;
     drops = [];
-    async function delay(time) {
-        await new Promise(resolve => {
-            return setTimeout(resolve, time);
-        });
-    }
-    function setDrops() {
-        for (var i = 0; i < columns; i++) {
-            var drop = {
-                isDropping: false,
-                currentX: -1,
-                elements: [],
-                speed: 0
-            };
-            drops.push(drop);
+    const resizeObserver = new ResizeObserver(async (entries) => {
+        if (canvas && canvas.parentElement) {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+            clearInterval(dropsJugglerInterval);
+            clearInterval(renderScreenInterval);
+            drops = [];
+            context = canvas.getContext("2d");
+            if (context) {
+                context.fillStyle = '#000000';
+                context.fillRect(0, 0, canvas.width, canvas.height);
+            }
+            columns = Math.floor(canvas.width / fontSize);
+            lines = canvas.height / fontSize;
+            drops = setDrops(columns);
+            dropsJugglerInterval = setInterval(dropsJuggler, 60);
+            renderScreenInterval = setInterval(renderScreen, 60);
         }
+    });
+    // Setting up canvas dimensions and resize observer
+    if (canvas.parentElement) {
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+        resizeObserver.observe(canvas.parentElement);
     }
-    function thereIsAvailableDropSpaces() {
-        for (var i = 0; i < drops.length; i++) {
-            if (!drops[i].isDropping)
-                return true;
-        }
-        return false;
-    }
-    function columnIsInUse(column) {
-        if (drops[column].isDropping)
-            return true;
-        return false;
-    }
-    function createDrop(column, elements) {
-        drops[column] = { isDropping: true, elements, currentX: 1, speed: dropsSpeeds[Math.floor(Math.random() * dropsSpeeds.length)] };
-    }
-    async function dropsControl() {
-        if (!thereIsAvailableDropSpaces())
-            return;
+    async function dropsJuggler() {
+        if (!thereIsAvailableDropSpaces(drops))
+            return null;
         var column = 0;
         do {
             column = Math.floor(Math.random() * columns);
-        } while (columnIsInUse(column));
+        } while (columnIsInUse(column, drops));
         var elements;
         elements = [];
         // Randomly populate the elements array
         for (var i = 0; i < lines; i++) {
             elements.push(letters[Math.floor(Math.random() * letters.length)]);
         }
-        createDrop(column, elements);
-        startDrop(drops[column], column);
-    }
-    async function startDrop(drop, column) {
-        for (var i = 0; i < drop.elements.length + dropsLength; i++) {
-            await delay(drop.speed);
-            drop.currentX++;
-        }
-        //remover drop do array de drops
-        drops[column].isDropping = false;
-        return;
-    }
-    function renderDrop(drop, column) {
-        for (var i = 1; i < drop.elements.length; i++) {
-            if (context) {
-                if (i > drop.currentX - dropsLength) {
-                    context.fillStyle = 'rgba(101, 163, 13, 1)';
-                    if (i === drop.currentX) {
-                        context.fillStyle = `rgba(236, 252, 203, 1)`;
-                    }
-                    if (i < (drop.currentX - dropsLength / 2) && i > drop.currentX - (dropsLength - (dropsLength / 10 * 4))) {
-                        context.fillStyle = 'rgba(101, 163, 13, 0.8)';
-                    }
-                    if (i <= drop.currentX - (dropsLength - (dropsLength / 10 * 4)) && i > drop.currentX - (dropsLength - (dropsLength / 10 * 3))) {
-                        context.fillStyle = 'rgba(101, 163, 13, 0.6)';
-                    }
-                    if (i <= drop.currentX - (dropsLength - (dropsLength / 10 * 3)) && i > drop.currentX - (dropsLength - (dropsLength / 10 * 2))) {
-                        context.fillStyle = 'rgba(101, 163, 13, 0.4)';
-                    }
-                    if (i <= drop.currentX - (dropsLength - (dropsLength / 10 * 2)) && i > drop.currentX - (dropsLength - (dropsLength / 10 * 1))) {
-                        context.fillStyle = 'rgba(101, 163, 13, 0.2)';
-                    }
-                    if (i <= drop.currentX - (dropsLength - (dropsLength / 10 * 1))) {
-                        context.fillStyle = 'rgba(101, 163, 13, 0.01)';
-                    }
-                    context.fillText(drop.elements[i], column * fontSize, i * fontSize);
-                }
-                if (i === drop.currentX)
-                    break;
-            }
-        }
+        drops[column] = createDrop(elements, dropsSpeeds);
+        startDrop(drops[column]);
     }
     function renderScreen() {
+        // set the canvas background style
         if (context && canvas) {
             context.fillStyle = '#000000';
             context.fillRect(0, 0, canvas.width, canvas.height);
         }
+        // iterates drop array
         for (var i = 0; i < drops.length; i++) {
             if (drops[i].isDropping) {
-                renderDrop(drops[i], i);
+                renderDrop(drops[i], i, context, dropsLength, fontSize);
             }
         }
     }
-    function matrix() {
-        dropsControl();
-    }
-    setDrops();
-    setInterval(matrix, 60);
-    setInterval(renderScreen, 10);
+    drops = setDrops(columns);
+    dropsJugglerInterval = setInterval(dropsJuggler, 60);
+    renderScreenInterval = setInterval(renderScreen, 60);
 });
