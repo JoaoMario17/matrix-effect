@@ -1,4 +1,3 @@
-import { delay } from './utils.js';
 import {
   setDrops,
   renderDrop,
@@ -48,7 +47,7 @@ document.addEventListener("DOMContentLoaded",() => {
   var drops: Array<drop>;
   drops = [];
 
-  const resizeObserver = new ResizeObserver(async (entries) => {
+  const resizeObserver = new ResizeObserver(async () => {
     if (canvas && canvas.parentElement) {
       canvas.width = canvas.parentElement.clientWidth;
       canvas.height = canvas.parentElement.clientHeight;

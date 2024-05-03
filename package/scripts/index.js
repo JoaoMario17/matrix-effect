@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dropsSpeeds = [50, 60, 70, 80, 90];
     var drops;
     drops = [];
-    const resizeObserver = new ResizeObserver(async (entries) => {
+    const resizeObserver = new ResizeObserver(async () => {
         if (canvas && canvas.parentElement) {
             canvas.width = canvas.parentElement.clientWidth;
             canvas.height = canvas.parentElement.clientHeight;
