@@ -1,24 +1,16 @@
 {
   "name": "matrix-effect",
-  "version": "1.4.0",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "watch": "tsc -w",
-    "transpile": "tsc"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/JoaoMario17/matrix-effect.git"
+		"start": "node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/JoaoMario17/matrix-effect/issues"
+  "dependencies": {
+    "express": "^4.19.2"
   },
-  "homepage": "https://github.com/JoaoMario17/matrix-effect#readme",
-  "devDependencies": {
-    "typescript": "^4.9.3"
-  }
+	"type": "module"
 }

@@ -1,5 +1,6 @@
 import { drop } from './interfaces.js';
 import { delay } from './utils.js';
+import { hexToRgb, rgbLit } from './utils.js'
 
 function setDrops(columns: number)  {
   var drops: Array<drop> = [];
@@ -10,6 +11,8 @@ function setDrops(columns: number)  {
       droppingFunction: () => {},
       currentX: -1,
       elements: [],
+			rgb: '',
+			rgbe: '',
       speed: 0
     }
 
@@ -23,30 +26,30 @@ function renderDrop(drop: drop, column: number, context: CanvasRenderingContext2
   for(var i = 1; i < drop.elements.length; i++) {
     if (context) {
       if (i > drop.currentX - dropsLength) {
-        context.fillStyle = 'rgba(101, 163, 13, 1)';
+        context.fillStyle = `rgba(${drop.rgb}, 1)`;
 
         if (i === drop.currentX) {
-          context.fillStyle = `rgba(236, 252, 203, 1)`;
+          context.fillStyle = `rgba(${drop.rgbe}, 1)`;
         }
 
         if (i < (drop.currentX - dropsLength/2) && i >  drop.currentX - (dropsLength - (dropsLength/10 * 4))) {
-          context.fillStyle = 'rgba(101, 163, 13, 0.8)';
+          context.fillStyle = `rgba(${drop.rgb}, 0.8)`;
         }
 
         if (i <=  drop.currentX - (dropsLength - (dropsLength/10 * 4)) && i >  drop.currentX - (dropsLength - (dropsLength/10 * 3))) {
-          context.fillStyle = 'rgba(101, 163, 13, 0.6)';
+          context.fillStyle = `rgba(${drop.rgb}, 0.6)`;
         }
 
         if (i <= drop.currentX - (dropsLength - (dropsLength/10 * 3)) && i >  drop.currentX - (dropsLength - (dropsLength/10 * 2))) {
-          context.fillStyle = 'rgba(101, 163, 13, 0.4)';
+          context.fillStyle = `rgba(${drop.rgb}, 0.4)`;
         }
 
         if (i <=  drop.currentX - (dropsLength - (dropsLength/10 * 2)) && i >  drop.currentX - (dropsLength - (dropsLength/10 * 1))) {
-          context.fillStyle = 'rgba(101, 163, 13, 0.2)';
+          context.fillStyle = `rgba(${drop.rgb}, 0.2)`;
         }
 
         if (i <= drop.currentX - (dropsLength - (dropsLength/10 * 1))) {
-          context.fillStyle = 'rgba(101, 163, 13, 0.01)';
+          context.fillStyle = `rgba(${drop.rgb}, 0.1)`;
         }
         
         context.fillText(drop.elements[i], column * fontSize, i * fontSize);
@@ -74,7 +77,7 @@ function columnIsInUse(column: number, drops: Array<drop>) {
   return false;
 }
 
-function createDrop(elements: Array<string>, dropsSpeeds: Array<number>) {
+function createDrop(elements: Array<string>, dropsSpeeds: Array<number>, color: string): drop {
   return {
     isDropping: true,
     droppingFunction: async function () {
@@ -87,6 +90,8 @@ function createDrop(elements: Array<string>, dropsSpeeds: Array<number>) {
       return;
     },
     elements,
+		rgb: hexToRgb(color),
+		rgbe: rgbLit(color),
     currentX: 1,
     speed: dropsSpeeds[Math.floor(Math.random() * dropsSpeeds.length)]
   } 
@@ -96,33 +101,12 @@ async function startDrop(drop: drop) {
   drop.droppingFunction();
 }
 
-async function dropsJuggler(drops: Array<drop>, columns: number, lines: number, letters: string, dropsSpeeds: Array<number>) {
-  if (!thereIsAvailableDropSpaces(drops))
-    return null;
-
-  var column = 0;
-
-  do {
-    column = Math.floor(Math.random() * columns);
-  } while (columnIsInUse(column, drops))
-
-  var elements: Array<string>
-  elements = []
-
-  // Randomly populate the elements array
-  for (var i = 0; i < lines; i++) {
-    elements.push(letters[Math.floor(Math.random() * letters.length)])
-  }
-
-  drops[column] = createDrop(elements, dropsSpeeds);
-  startDrop(drops[column]);
-}
-
 export {
   setDrops,
-  renderDrop,
-  thereIsAvailableDropSpaces,
-  columnIsInUse,
-  createDrop,
   startDrop,
+  renderDrop,
+  createDrop,
+  columnIsInUse,
+  thereIsAvailableDropSpaces
 }
+
