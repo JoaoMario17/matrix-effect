@@ -1,7 +1,9 @@
 export interface drop {
-  isDropping: boolean;
   droppingFunction: Function;
-  currentX: number;
   elements: Array<string>;
+	rgb: string;
+	rgbe: string;
+  isDropping: boolean;
+  currentX: number;
   speed: number;
 }
